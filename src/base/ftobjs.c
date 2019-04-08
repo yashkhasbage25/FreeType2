@@ -490,8 +490,8 @@
     if ( pbox.xMin < -0x8000 || pbox.xMax > 0x7FFF ||
          pbox.yMin < -0x8000 || pbox.yMax > 0x7FFF )
     {
-      FT_TRACE3(( "ft_glyphslot_preset_bitmap: [%ld %ld %ld %ld]\n",
-                  pbox.xMin, pbox.yMin, pbox.xMax, pbox.yMax ));
+      FT_TRACE3(( "[%s][%lu] ft_glyphslot_preset_bitmap: [%ld %ld %ld %ld]\n",
+                  __FILE__, __LINE__, pbox.xMin, pbox.yMin, pbox.xMax, pbox.yMax ));
       return 1;
     }
 
@@ -613,7 +613,7 @@
     clazz  = driver->clazz;
     memory = driver->root.memory;
 
-    FT_TRACE4(( "FT_New_GlyphSlot: Creating new slot object\n" ));
+    FT_TRACE4(( "[%s][%lu] FT_New_GlyphSlot: Creating new slot object\n", __FILE__, __LINE__ ));
     if ( !FT_ALLOC( slot, clazz->slot_object_size ) )
     {
       slot->face = face;
@@ -637,7 +637,7 @@
 
 
   Exit:
-    FT_TRACE4(( "FT_New_GlyphSlot: Return 0x%x\n", error ));
+    FT_TRACE4(( "[%s][%lu] FT_New_GlyphSlot: Return 0x%x\n", __FILE__, __LINE__, error ));
 
     return error;
   }
@@ -1055,8 +1055,8 @@
     }
 
 #ifdef FT_DEBUG_LEVEL_TRACE
-    FT_TRACE5(( "FT_Load_Glyph: index %d, flags 0x%x\n",
-                glyph_index, load_flags ));
+    FT_TRACE5(( "[%s][%lu] FT_Load_Glyph: index %d, flags 0x%x\n",
+                __FILE__, __LINE__, glyph_index, load_flags ));
     FT_TRACE5(( "  x advance: %f\n", slot->advance.x / 64.0 ));
     FT_TRACE5(( "  y advance: %f\n", slot->advance.y / 64.0 ));
     FT_TRACE5(( "  linear x advance: %f\n",
@@ -1749,13 +1749,13 @@
 
     if ( offset > stream->size )
     {
-      FT_TRACE2(( "open_face_PS_from_sfnt_stream: invalid table offset\n" ));
+      FT_TRACE2(( "[%s][%lu] open_face_PS_from_sfnt_stream: invalid table offset\n", __FILE__, __LINE__ ));
       error = FT_THROW( Invalid_Table );
       goto Exit;
     }
     else if ( length > stream->size - offset )
     {
-      FT_TRACE2(( "open_face_PS_from_sfnt_stream: invalid table length\n" ));
+      FT_TRACE2(( "[%s][%lu] open_face_PS_from_sfnt_stream: invalid table length\n", __FILE__, __LINE__ ));
       error = FT_THROW( Invalid_Table );
       goto Exit;
     }
@@ -1842,16 +1842,16 @@
       /* FT2 allocator takes signed long buffer length,
        * too large value causing overflow should be checked
        */
-      FT_TRACE4(( "                 POST fragment #%d: length=0x%08x"
+      FT_TRACE4(( "[%s][%lu]                 POST fragment #%d: length=0x%08x"
                   " total pfb_len=0x%08x\n",
-                  i, temp, pfb_len + temp + 6 ));
+                  __FILE__, __LINE__, i, temp, pfb_len + temp + 6 ));
 
       if ( FT_MAC_RFORK_MAX_LEN < temp               ||
            FT_MAC_RFORK_MAX_LEN - temp < pfb_len + 6 )
       {
-        FT_TRACE2(( "             MacOS resource length cannot exceed"
+        FT_TRACE2(( "[%s][%lu]             MacOS resource length cannot exceed"
                     " 0x%08x\n",
-                    FT_MAC_RFORK_MAX_LEN ));
+                    __FILE__, __LINE__, FT_MAC_RFORK_MAX_LEN ));
 
         error = FT_THROW( Invalid_Offset );
         goto Exit;
@@ -1860,9 +1860,9 @@
       pfb_len += temp + 6;
     }
 
-    FT_TRACE2(( "             total buffer size to concatenate"
+    FT_TRACE2(( "[%s][%lu]             total buffer size to concatenate"
                 " %d POST fragments: 0x%08x\n",
-                 resource_cnt, pfb_len + 2 ));
+                 __FILE__, __LINE__, resource_cnt, pfb_len + 2 ));
 
     if ( pfb_len + 2 < 6 )
     {
@@ -1909,9 +1909,9 @@
       if ( FT_READ_USHORT( flags ) )
         goto Exit2;
 
-      FT_TRACE3(( "POST fragment[%d]:"
+      FT_TRACE3(( "[%s][%lu]POST fragment[%d]:"
                   " offsets=0x%08x, rlen=0x%08x, flags=0x%04x\n",
-                  i, offsets[i], rlen, flags ));
+                  __FILE__, __LINE__, i, offsets[i], rlen, flags ));
 
       error = FT_ERR( Array_Too_Large );
 
@@ -1920,8 +1920,8 @@
 
       if ( ( flags >> 8 ) == 0 )        /* Comment, should not be loaded */
       {
-        FT_TRACE3(( "    Skip POST fragment #%d because it is a comment\n",
-                    i ));
+        FT_TRACE3(( "[%s][%lu]    Skip POST fragment #%d because it is a comment\n",
+                    __FILE__, __LINE__, i ));
         continue;
       }
 
@@ -1936,9 +1936,9 @@
         len += rlen;
       else
       {
-        FT_TRACE3(( "    Write POST fragment #%d header (4-byte) to buffer"
+        FT_TRACE3(( "[%s][%lu]    Write POST fragment #%d header (4-byte) to buffer"
                     " %p + 0x%08x\n",
-                    i, pfb_data, pfb_lenpos ));
+                    __FILE__, __LINE__, i, pfb_data, pfb_lenpos ));
 
         if ( pfb_lenpos + 3 > pfb_len + 2 )
           goto Exit2;
@@ -1951,9 +1951,9 @@
         if ( ( flags >> 8 ) == 5 )      /* End of font mark */
           break;
 
-        FT_TRACE3(( "    Write POST fragment #%d header (6-byte) to buffer"
+        FT_TRACE3(( "[%s][%lu]    Write POST fragment #%d header (6-byte) to buffer"
                     " %p + 0x%08x\n",
-                    i, pfb_data, pfb_pos ));
+                    __FILE__, __LINE__, i, pfb_data, pfb_pos ));
 
         if ( pfb_pos + 6 > pfb_len + 2 )
           goto Exit2;
@@ -1974,9 +1974,9 @@
       if ( pfb_pos > pfb_len || pfb_pos + rlen > pfb_len )
         goto Exit2;
 
-      FT_TRACE3(( "    Load POST fragment #%d (%d byte) to buffer"
+      FT_TRACE3(( "[%s][%lu]    Load POST fragment #%d (%d byte) to buffer"
                   " %p + 0x%08x\n",
-                  i, rlen, pfb_data, pfb_pos ));
+                  __FILE__, __LINE__, i, rlen, pfb_data, pfb_pos ));
 
       error = FT_Stream_Read( stream, (FT_Byte *)pfb_data + pfb_pos, rlen );
       if ( error )
@@ -2008,10 +2008,10 @@
 
   Exit2:
     if ( FT_ERR_EQ( error, Array_Too_Large ) )
-      FT_TRACE2(( "  Abort due to too-short buffer to store"
-                  " all POST fragments\n" ));
+      FT_TRACE2(( "[%s][%lu]  Abort due to too-short buffer to store"
+                  " all POST fragments\n", __FILE__, __LINE__ ));
     else if ( FT_ERR_EQ( error, Invalid_Offset ) )
-      FT_TRACE2(( "  Abort due to invalid offset in a POST fragment\n" ));
+      FT_TRACE2(( "[%s][%lu]  Abort due to invalid offset in a POST fragment\n", __FILE__, __LINE__ ));
 
     if ( error )
       error = FT_ERR( Cannot_Open_Resource );
@@ -2243,25 +2243,25 @@
       is_darwin_vfs = ft_raccess_rule_by_darwin_vfs( library, i );
       if ( is_darwin_vfs && vfs_rfork_has_no_font )
       {
-        FT_TRACE3(( "Skip rule %d: darwin vfs resource fork"
+        FT_TRACE3(( "[%s][%lu] Skip rule %d: darwin vfs resource fork"
                     " is already checked and"
                     " no font is found\n",
-                    i ));
+                    __FILE__, __LINE__, i ));
         continue;
       }
 
       if ( errors[i] )
       {
-        FT_TRACE3(( "Error 0x%x has occurred in rule %d\n",
-                    errors[i], i ));
+        FT_TRACE3(( "[%s][%lu]Error 0x%x has occurred in rule %d\n",
+                    __FILE__, __LINE__, errors[i], i ));
         continue;
       }
 
       args2.flags    = FT_OPEN_PATHNAME;
       args2.pathname = file_names[i] ? file_names[i] : args->pathname;
 
-      FT_TRACE3(( "Try rule %d: %s (offset=%d) ...",
-                  i, args2.pathname, offsets[i] ));
+      FT_TRACE3(( "[%s][%lu] Try rule %d: %s (offset=%d) ...",
+                  __FILE__, __LINE__, i, args2.pathname, offsets[i] ));
 
       error = FT_Stream_New( library, &args2, &stream2 );
       if ( is_darwin_vfs && FT_ERR_EQ( error, Cannot_Open_Stream ) )
@@ -2269,7 +2269,7 @@
 
       if ( error )
       {
-        FT_TRACE3(( "failed\n" ));
+        FT_TRACE3(( "[%s][%lu] failed\n", __FILE__, __LINE__ ));
         continue;
       }
 
@@ -2277,7 +2277,7 @@
                              face_index, aface );
       FT_Stream_Free( stream2, 0 );
 
-      FT_TRACE3(( "%s\n", error ? "failed": "successful" ));
+      FT_TRACE3(( "[%s][%lu] %s\n", __FILE__, __LINE__, error ? "failed": "successful" ));
 
       if ( !error )
           break;
@@ -2329,14 +2329,14 @@
 #define FT_COMPONENT  raccess
 
 #ifdef FT_DEBUG_LEVEL_TRACE
-      FT_TRACE3(( "Try as dfont: " ));
+      FT_TRACE3(( "[%s][%lu] Try as dfont: ", __FILE__, __LINE__ ));
       if ( !( args->flags & FT_OPEN_MEMORY ) )
-        FT_TRACE3(( "%s ...", args->pathname ));
+        FT_TRACE3(( "[%s][%lu] %s ...", __FILE__, __LINE__, args->pathname ));
 #endif
 
       error = IsMacResource( library, stream, 0, face_index, aface );
 
-      FT_TRACE3(( "%s\n", error ? "failed" : "successful" ));
+      FT_TRACE3(( "[%s][%lu] %s\n", __FILE__, __LINE__, error ? "failed" : "successful" ));
 
 #undef  FT_COMPONENT
 #define FT_COMPONENT  objs
@@ -2390,12 +2390,12 @@
 
 
 #ifdef FT_DEBUG_LEVEL_TRACE
-    FT_TRACE3(( "FT_Open_Face: " ));
+    FT_TRACE3(( "[%s][%lu] FT_Open_Face: ", __FILE__, __LINE__));
     if ( face_index < 0 )
-      FT_TRACE3(( "Requesting number of faces and named instances\n"));
+      FT_TRACE3(( "[%s][%lu] Requesting number of faces and named instances\n", __FILE__, __LINE__));
     else
     {
-      FT_TRACE3(( "Requesting face %ld", face_index & 0xFFFFL ));
+      FT_TRACE3(( "[%s][%lu] Requesting face %ld", __FILE__, __LINE__, face_index & 0xFFFFL ));
       if ( face_index & 0x7FFF0000L )
         FT_TRACE3(( ", named instance %ld", face_index >> 16 ));
       FT_TRACE3(( "\n" ));
@@ -2545,7 +2545,7 @@
     }
 
   Success:
-    FT_TRACE4(( "FT_Open_Face: New face object, adding to list\n" ));
+    FT_TRACE4(( "[%s][%lu] FT_Open_Face: New face object, adding to list\n", __FILE__, __LINE__ ));
 
     /* add the face object to its driver's list */
     if ( FT_NEW( node ) )
@@ -2557,7 +2557,7 @@
     FT_List_Add( &face->driver->faces_list, node );
 
     /* now allocate a glyph slot object for the face */
-    FT_TRACE4(( "FT_Open_Face: Creating glyph slot\n" ));
+    FT_TRACE4(( "[%s][%lu] FT_Open_Face: Creating glyph slot\n", __FILE__, __LINE__ ));
 
     if ( face_index >= 0 )
     {
@@ -2570,7 +2570,7 @@
         FT_Size  size;
 
 
-        FT_TRACE4(( "FT_Open_Face: Creating size object\n" ));
+        FT_TRACE4(( "[%s][%lu] FT_Open_Face: Creating size object\n", __FILE__, __LINE__ ));
 
         error = FT_New_Size( face, &size );
         if ( error )
@@ -2611,9 +2611,9 @@
         /* check whether negation actually has worked */
         if ( bsize->height < 0 || bsize->x_ppem < 0 || bsize->y_ppem < 0 )
         {
-          FT_TRACE0(( "FT_Open_Face:"
+          FT_TRACE0(( "[%s][%lu] FT_Open_Face:"
                       " Invalid bitmap dimensions for strike %d,"
-                      " now disabled\n", i ));
+                      " now disabled\n", __FILE__, __LINE__, i ));
           bsize->width  = 0;
           bsize->height = 0;
           bsize->size   = 0;
@@ -2663,8 +2663,9 @@
 #ifdef FT_DEBUG_LEVEL_TRACE
     if ( !error && face_index < 0 )
     {
-      FT_TRACE3(( "FT_Open_Face: The font has %ld face%s\n"
+      FT_TRACE3(( "[%s][%lu] FT_Open_Face: The font has %ld face%s\n"
                   "              and %ld named instance%s for face %ld\n",
+                  __FILE__, __LINE__,
                   face->num_faces,
                   face->num_faces == 1 ? "" : "s",
                   face->style_flags >> 16,
@@ -2673,7 +2674,7 @@
     }
 #endif
 
-    FT_TRACE4(( "FT_Open_Face: Return 0x%x\n", error ));
+    FT_TRACE4(( "[%s][%lu] FT_Open_Face: Return 0x%x\n", __FILE__, __LINE__, error ));
 
     return error;
   }
@@ -2956,7 +2957,7 @@
 
       if ( w == FT_PIX_ROUND( bsize->x_ppem ) || ignore_width )
       {
-        FT_TRACE3(( "FT_Match_Size: bitmap strike %d matches\n", i ));
+        FT_TRACE3(( "[%s][%lu] FT_Match_Size: bitmap strike %d matches\n", i ));
 
         if ( size_index )
           *size_index = (FT_ULong)i;
@@ -2965,7 +2966,7 @@
       }
     }
 
-    FT_TRACE3(( "FT_Match_Size: no matching bitmap strike\n" ));
+    FT_TRACE3(( "[%s][%lu] FT_Match_Size: no matching bitmap strike\n", __FILE__, __LINE__ ));
 
     return FT_THROW( Invalid_Pixel_Size );
   }
@@ -3198,14 +3199,14 @@
     {
       error = clazz->select_size( face->size, (FT_ULong)strike_index );
 
-      FT_TRACE5(( "FT_Select_Size (%s driver):\n",
+      FT_TRACE5(( "[%s][%lu] FT_Select_Size (%s driver):\n", __FILE__, __LINE__,
                   face->driver->root.clazz->module_name ));
     }
     else
     {
       FT_Select_Metrics( face, (FT_ULong)strike_index );
 
-      FT_TRACE5(( "FT_Select_Size:\n" ));
+      FT_TRACE5(( "[%s][%lu] FT_Select_Size:\n", __FILE__, __LINE__ ));
     }
 
 #ifdef FT_DEBUG_LEVEL_TRACE
@@ -3258,7 +3259,7 @@
     {
       error = clazz->request_size( face->size, req );
 
-      FT_TRACE5(( "FT_Request_Size (%s driver):\n",
+      FT_TRACE5(( "[%s][%lu] FT_Request_Size (%s driver):\n", __FILE__, __LINE__,
                   face->driver->root.clazz->module_name ));
     }
     else if ( !FT_IS_SCALABLE( face ) && FT_HAS_FIXED_SIZES( face ) )
@@ -3280,7 +3281,7 @@
     {
       FT_Request_Metrics( face, req );
 
-      FT_TRACE5(( "FT_Request_Size:\n" ));
+      FT_TRACE5(( "[%s][%lu] FT_Request_Size:\n" , __FILE__, __LINE__));
     }
 
 #ifdef FT_DEBUG_LEVEL_TRACE
@@ -3449,8 +3450,9 @@
 
               if ( akerning->x != orig_x_rounded ||
                    akerning->y != orig_y_rounded )
-                FT_TRACE5(( "FT_Get_Kerning: horizontal kerning"
+                FT_TRACE5(( "[%s][%lu] FT_Get_Kerning: horizontal kerning"
                             " (%d, %d) scaled down to (%d, %d) pixels\n",
+                            __FILE__, __LINE__,
                             orig_x_rounded / 64, orig_y_rounded / 64,
                             akerning->x / 64, akerning->y / 64 ));
             }
@@ -3721,7 +3723,7 @@
 
       if ( charcode > 0xFFFFFFFFUL )
       {
-        FT_TRACE1(( "FT_Get_Char_Index: too large charcode" ));
+        FT_TRACE1(( "[%s][%lu] FT_Get_Char_Index: too large charcode" , __FILE__, __LINE__));
         FT_TRACE1(( " 0x%x is truncated\n", charcode ));
       }
 
@@ -3896,14 +3898,14 @@
 
         if ( charcode > 0xFFFFFFFFUL )
         {
-          FT_TRACE1(( "FT_Face_GetCharVariantIndex:"
-                      " too large charcode" ));
+          FT_TRACE1(( "[%s][%lu] FT_Face_GetCharVariantIndex:"
+                      " too large charcode" , __FILE__, __LINE__));
           FT_TRACE1(( " 0x%x is truncated\n", charcode ));
         }
         if ( variantSelector > 0xFFFFFFFFUL )
         {
-          FT_TRACE1(( "FT_Face_GetCharVariantIndex:"
-                      " too large variantSelector" ));
+          FT_TRACE1(( "[%s][%lu] FT_Face_GetCharVariantIndex:"
+                      " too large variantSelector" , __FILE__, __LINE__));
           FT_TRACE1(( " 0x%x is truncated\n", variantSelector ));
         }
 
@@ -3939,14 +3941,14 @@
 
         if ( charcode > 0xFFFFFFFFUL )
         {
-          FT_TRACE1(( "FT_Face_GetCharVariantIsDefault:"
-                      " too large charcode" ));
+          FT_TRACE1(( "[%s][%lu] FT_Face_GetCharVariantIsDefault:"
+                      " too large charcode", __FILE__, __LINE__ ));
           FT_TRACE1(( " 0x%x is truncated\n", charcode ));
         }
         if ( variantSelector > 0xFFFFFFFFUL )
         {
-          FT_TRACE1(( "FT_Face_GetCharVariantIsDefault:"
-                      " too large variantSelector" ));
+          FT_TRACE1(( "[%s][%lu] FT_Face_GetCharVariantIsDefault:"
+                      " too large variantSelector", __FILE__, __LINE__ ));
           FT_TRACE1(( " 0x%x is truncated\n", variantSelector ));
         }
 
@@ -4009,7 +4011,7 @@
 
         if ( charcode > 0xFFFFFFFFUL )
         {
-          FT_TRACE1(( "FT_Face_GetVariantsOfChar: too large charcode" ));
+          FT_TRACE1(( "[%s][%lu] FT_Face_GetVariantsOfChar: too large charcode", __FILE__, __LINE__ ));
           FT_TRACE1(( " 0x%x is truncated\n", charcode ));
         }
 
@@ -4043,7 +4045,7 @@
 
         if ( variantSelector > 0xFFFFFFFFUL )
         {
-          FT_TRACE1(( "FT_Get_Char_Index: too large variantSelector" ));
+          FT_TRACE1(( "[%s][%lu] FT_Get_Char_Index: too large variantSelector", __FILE__, __LINE__ ));
           FT_TRACE1(( " 0x%x is truncated\n", variantSelector ));
         }
 
@@ -4681,7 +4683,7 @@
         int            pitch = bitmap.pitch;
 
 
-        FT_TRACE3(( "FT_Render_Glyph: bitmap %dx%d, %s (mode %d)\n",
+        FT_TRACE3(( "[%s][%lu] FT_Render_Glyph: bitmap %dx%d, %s (mode %d)\n", __FILE__, __LINE__,
                     pitch,
                     rows,
                     pixel_modes[slot->bitmap.pixel_mode],
@@ -4731,11 +4733,11 @@
         if ( pitch < 0 )
           topleft -= pitch * ( rows - 1 );
 
-        FT_TRACE7(( "Netpbm image: start\n" ));
+        FT_TRACE7(( "[%s][%lu] Netpbm image: start\n" ));
         switch ( slot->bitmap.pixel_mode )
         {
         case FT_PIXEL_MODE_MONO:
-          FT_TRACE7(( "P1 %d %d\n", width, rows ));
+          FT_TRACE7(( "[%s][%lu] P1 %d %d\n", width, rows ));
           for ( i = 0; i < rows; i++ )
           {
             for ( j = 0; j < width; )
@@ -4747,7 +4749,7 @@
           break;
 
         default:
-          FT_TRACE7(( "P2 %d %d 255\n", width, rows ));
+          FT_TRACE7(( "[%s][%lu] P2 %d %d 255\n", width, rows ));
           for ( i = 0; i < rows; i++ )
           {
             for ( j = 0; j < width; j += 1 )
@@ -4755,10 +4757,10 @@
             FT_TRACE7(( "\n" ));
           }
         }
-        FT_TRACE7(( "Netpbm image: end\n" ));
+        FT_TRACE7(( "[%s][%lu] Netpbm image: end\n" ));
       }
       else
-        FT_TRACE7(( "Netpbm image: too large, omitted\n" ));
+        FT_TRACE7(( "[%s][%lu] Netpbm image: too large, omitted\n" ));
     }
 
 #undef  FT_COMPONENT
@@ -5147,7 +5149,7 @@
                                               FT_SERVICE_ID_PROPERTIES );
     if ( !interface )
     {
-      FT_ERROR(( "%s: module `%s' doesn't support properties\n",
+      FT_ERROR(( "[%s][%lu] %s: module `%s' doesn't support properties\n", __FILE__, __LINE__,
                  func_name, module_name ));
       return FT_THROW( Unimplemented_Feature );
     }
@@ -5161,7 +5163,7 @@
 
     if ( missing_func )
     {
-      FT_ERROR(( "%s: property service of module `%s' is broken\n",
+      FT_ERROR(( "[%s][%lu] %s: property service of module `%s' is broken\n", __FILE__, __LINE__,
                  func_name, module_name ));
       return FT_THROW( Unimplemented_Feature );
     }
@@ -5383,14 +5385,14 @@
           if ( ( module->clazz->module_flags & FT_MODULE_FONT_DRIVER ) == 0 )
             continue;
 
-          FT_TRACE7(( "FT_Done_Library: close faces for %s\n", module_name ));
+          FT_TRACE7(( "[%s][%lu] FT_Done_Library: close faces for %s\n", __FILE__, __LINE__, module_name ));
 
           faces = &FT_DRIVER( module )->faces_list;
           while ( faces->head )
           {
             FT_Done_Face( FT_FACE( faces->head->data ) );
             if ( faces->head )
-              FT_TRACE0(( "FT_Done_Library: failed to free some faces\n" ));
+              FT_TRACE0(( "[%s][%lu] FT_Done_Library: failed to free some faces\n", __FILE__, __LINE__ ));
           }
         }
       }
